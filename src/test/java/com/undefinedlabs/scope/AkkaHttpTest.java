@@ -5,7 +5,6 @@ import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.http.javadsl.ConnectHttp;
 import akka.http.javadsl.Http;
-import akka.http.javadsl.ServerBinding;
 import akka.http.javadsl.model.HttpRequest;
 import akka.http.javadsl.model.HttpResponse;
 import akka.stream.ActorMaterializer;
@@ -21,7 +20,6 @@ import scala.concurrent.duration.Duration;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,10 +27,9 @@ public class AkkaHttpTest {
 
     private static ActorSystem system;
     private static ActorMaterializer materializer;
-    private static int localPort;
 
     @BeforeClass
-    public static void setup() {
+    public static void setup() throws InterruptedException {
         system = ActorSystem.create("testActorSystem");
         materializer = ActorMaterializer.create(system);
 
@@ -42,13 +39,8 @@ public class AkkaHttpTest {
         QuickstartServer app = new QuickstartServer(system, userRegistryActor);
 
         final Flow<HttpRequest, HttpResponse, NotUsed> routeFlow = app.createRoute().flow(system, materializer);
-        http.bindAndHandle(routeFlow, ConnectHttp.toHost("localhost" , 0), materializer).thenApply(new Function<ServerBinding, Object>() {
-            @Override
-            public Object apply(ServerBinding serverBinding) {
-                localPort = serverBinding.localAddress().getPort();
-                return serverBinding;
-            }
-        });
+        http.bindAndHandle(routeFlow, ConnectHttp.toHost("localhost" , 19999), materializer);
+        Thread.sleep(3000);
     }
 
     @AfterClass
@@ -66,10 +58,10 @@ public class AkkaHttpTest {
         //When
         final ObjectMapper objMapper = new ObjectMapper();
         final RequestBody body = RequestBody.create(MediaType.parse("application/json"), objMapper.writeValueAsString(new UserRegistryActor.User("John Doe", 42, "SomeCountry")));
-        final Request.Builder reqBuilder = new Request.Builder().url("http://localhost:"+localPort+"/users").post(body);
+        final Request.Builder reqBuilder = new Request.Builder().url("http://localhost:19999/users").post(body);
         final Response response = httpClient.newCall(reqBuilder.build()).execute();
 
-        final Request.Builder reqBuilderTwo = new Request.Builder().url("http://localhost:"+localPort+"/users?q=queryparam");
+        final Request.Builder reqBuilderTwo = new Request.Builder().url("http://localhost:19999/users?q=queryparam");
         final Response responseTwo = httpClient.newCall(reqBuilderTwo.build()).execute();
 
         //Then

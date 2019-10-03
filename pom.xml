@@ -24,6 +24,13 @@
   <dependencies>
 
     <dependency>
+      <groupId>com.undefinedlabs.scope</groupId>
+      <artifactId>scope-agent</artifactId>
+      <version>${scope.agent.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
       <groupId>com.squareup.okhttp3</groupId>
       <artifactId>okhttp</artifactId>
       <version>3.14.3</version>
