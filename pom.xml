@@ -18,17 +18,9 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <scala.version>2.12</scala.version>
     <akka.http.version>10.1.10</akka.http.version>
-    <scope.agent.version>0.2.5-beta.13</scope.agent.version>
   </properties>
 
   <dependencies>
-
-    <dependency>
-      <groupId>com.undefinedlabs.scope</groupId>
-      <artifactId>scope-agent</artifactId>
-      <version>${scope.agent.version}</version>
-      <scope>provided</scope>
-    </dependency>
 
     <dependency>
       <groupId>com.squareup.okhttp3</groupId>
@@ -141,16 +133,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <argLine>-javaagent:${settings.localRepository}/com/undefinedlabs/scope/scope-agent/${scope.agent.version}/scope-agent-${scope.agent.version}.jar</argLine>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <configuration>
-          <argLine>-javaagent:${settings.localRepository}/com/undefinedlabs/scope/scope-agent/${scope.agent.version}/scope-agent-${scope.agent.version}.jar</argLine>
-        </configuration>
         <executions>
           <execution>
             <goals>
