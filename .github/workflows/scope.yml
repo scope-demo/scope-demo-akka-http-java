@@ -23,3 +23,4 @@ jobs:
         name: scopelogs
         path: /home/runner/work/scope-demo-akka-http-java/scope-demo-akka-http-java/logs    
     
+    
